@@ -55,10 +55,11 @@ class ViewController: UIViewController {
             self.addChildViewController(vc)
             vc.didMove(toParentViewController: self)
             
-            let guide = view.safeAreaLayoutGuide
-            let height = guide.layoutFrame.size.height
+            let height = view.frame.height
             let navBarHeight = self.navigationController?.navigationBar.frame.height ?? 0
-            vc.view.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: height - menuBarHeight - navBarHeight)
+            let statusBarHeight = UIApplication.shared.statusBarFrame.height
+
+            vc.view.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: height - menuBarHeight - navBarHeight - statusBarHeight)
         }
     }
     
@@ -73,7 +74,7 @@ class ViewController: UIViewController {
         collectionView.topAnchor.constraint(equalTo: topMenuBar.bottomAnchor).isActive = true
         collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
 }
 
