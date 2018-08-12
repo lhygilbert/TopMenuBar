@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     
     let menuBarHeight: CGFloat = 48
     lazy var topMenuBar: TopMenuBar = {
-        let menuBar = TopMenuBar(titles: menuTitles, highlightColor: .blue, unhighlightColor: .lightGray)
+        let menuBar = TopMenuBar(titles: menuTitles, highlightColor: .black, unhighlightColor: .lightGray)
         menuBar.delegate = self
         menuBar.translatesAutoresizingMaskIntoConstraints = false
         return menuBar
@@ -98,10 +98,9 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate, 
         return 0
     }
     
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        let x = targetContentOffset.pointee.x
-        let index = Int(x / view.frame.width)
-        topMenuBar.scrollTo(index: index)
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offset = scrollView.contentOffset.x / view.frame.width
+        topMenuBar.scrollTo(offset: offset)
     }
     
 }

@@ -89,9 +89,9 @@ class TopMenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, 
         bottomBar.heightAnchor.constraint(equalToConstant: bottomBarHeight).isActive = true
     }
     
-    func scrollTo(index: Int) {
-        selectedIndex = index
-        barLeadingConstraint?.constant = CGFloat(index) * barWidth
+    func scrollTo(offset: CGFloat) {
+        selectedIndex = Int(round(offset))
+        barLeadingConstraint?.constant = offset * barWidth
         
         UIView.animate(withDuration: 0.2) {
             self.layoutIfNeeded()
@@ -117,7 +117,7 @@ class TopMenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, 
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        scrollTo(index: indexPath.item)
+        selectedIndex = indexPath.item
         delegate?.menuDidTapped(at: indexPath.item)
     }
     
