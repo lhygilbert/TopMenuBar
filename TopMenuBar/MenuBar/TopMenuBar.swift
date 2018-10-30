@@ -14,27 +14,19 @@ protocol MenuBarDelegate {
 
 class TopMenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
-    let menuCellId = "menuCellId"
+    private let menuCellId = "menuCellId"
     var delegate: MenuBarDelegate?
-    var titles = [String]()
+    private var titles = [String]()
+    
+    var numberOfItem: CGFloat {
+        return CGFloat(titles.count == 0 ? 1 : titles.count)
+    }
     
     var selectedIndex = 0
-    var highlightColor: UIColor?
-    var unhighlightColor: UIColor?
+    var highlightColor: UIColor = .black
+    var unhighlightColor: UIColor = .lightGray
     
-    var selectedColor: UIColor {
-        get {
-            return highlightColor ?? .black
-        }
-    }
-    
-    var unselectedColor: UIColor {
-        get {
-            return unhighlightColor ?? .lightGray
-        }
-    }
-    
-    lazy var menuCollectionView: UICollectionView = {
+    private lazy var menuCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -47,16 +39,15 @@ class TopMenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, 
         return collectionView
     }()
     
-    let bottomBarHeight: CGFloat = 4
-    var barWidth: CGFloat = UIScreen.main.bounds.width
-    var barLeadingConstraint: NSLayoutConstraint?
-    let bottomBar: UIView = {
+    private let bottomBarHeight: CGFloat = 2
+    private var barLeadingConstraint: NSLayoutConstraint?
+    private let bottomBar: UIView = {
         let bar = UIView()
         bar.translatesAutoresizingMaskIntoConstraints = false
         return bar
     }()
     
-    convenience init(titles: [String], highlightColor: UIColor? = .black, unhighlightColor: UIColor? = .lightGray) {
+    convenience init(titles: [String], highlightColor: UIColor = .black, unhighlightColor: UIColor = .lightGray) {
         self.init(frame: .zero)
         self.titles = titles
         self.highlightColor = highlightColor
@@ -77,20 +68,20 @@ class TopMenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, 
         menuCollectionView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         menuCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         menuCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        menuCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -bottomBarHeight).isActive = true
+        menuCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
-        barWidth = UIScreen.main.bounds.width / CGFloat(titles.count == 0 ? 1 : titles.count)
         addSubview(bottomBar)
         bottomBar.backgroundColor = highlightColor
         barLeadingConstraint = bottomBar.leadingAnchor.constraint(equalTo: leadingAnchor)
         barLeadingConstraint?.isActive = true
         bottomBar.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        bottomBar.widthAnchor.constraint(equalToConstant: barWidth).isActive = true
+        bottomBar.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 1 / numberOfItem).isActive = true
         bottomBar.heightAnchor.constraint(equalToConstant: bottomBarHeight).isActive = true
     }
     
     func scrollTo(offset: CGFloat) {
         selectedIndex = Int(round(offset))
+        let barWidth = self.bounds.width / numberOfItem
         barLeadingConstraint?.constant = offset * barWidth
         
         UIView.animate(withDuration: 0.2) {
@@ -128,7 +119,7 @@ class TopMenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, 
     fileprivate func setupCell(cell: MenuCell, at indexPath: IndexPath) {
         let index = indexPath.item
         cell.titleLabel.text = self.titles[index]
-        cell.titleLabel.textColor = index == selectedIndex ? selectedColor : unselectedColor
+        cell.titleLabel.textColor = index == selectedIndex ? highlightColor : unhighlightColor
     }
     
 }
